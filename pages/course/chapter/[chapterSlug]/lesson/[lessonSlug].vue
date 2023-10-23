@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="chapter && lesson">
     <p class="mt-0 uppercase font-bold text-slate-400 mb-1">
       Lesson {{ chapter.number }} - {{ lesson.number }}
     </p>
@@ -27,7 +27,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 const course = useCourse()
 const route = useRoute()
 
@@ -38,8 +38,18 @@ const chapter = computed(() => {
 })
 
 const lesson = computed(() => {
+  if (!chapter?.value) return undefined
+
   return chapter.value.lessons.find(
     (lesson) => lesson.slug === route.params.lessonSlug
   )
+})
+
+const title = computed(() => {
+  return lesson.value?.title ? `${lesson.value.title} - ${course.title}` : ''
+})
+
+useHead({
+  title
 })
 </script>
