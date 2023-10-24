@@ -44,13 +44,25 @@ const chapter = computed(() => {
   )
 })
 
-const lesson = computed(() => {
-  if (!chapter?.value) return undefined
+if (!chapter.value) {
+  throw createError({
+    statusCode: 404,
+    message: 'Chapter not found'
+  })
+}
 
-  return chapter.value.lessons.find(
+const lesson = computed(() => {
+  return chapter?.value?.lessons.find(
     (lesson) => lesson.slug === route.params.lessonSlug
   )
 })
+
+if (!lesson.value) {
+  throw createError({
+    statusCode: 404,
+    message: 'Lesson not found'
+  })
+}
 
 // head
 const title = computed(() => {
