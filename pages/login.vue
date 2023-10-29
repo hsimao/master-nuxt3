@@ -16,7 +16,7 @@ const { query } = useRoute()
 const supabase = useSupabaseClient()
 const user = useSupabaseUser()
 
-// if already logged in
+// NOTE: don't working anymore
 watchEffect(async () => {
   if (user.value) {
     await navigateTo(query.redirectTo as string, {
