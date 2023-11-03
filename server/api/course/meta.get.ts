@@ -1,38 +1,68 @@
-import type {
-  Course,
-  CourseMeta,
-  OutlineLesson,
-  OutlineChapter
-} from '~/types/course'
-import course from '~/server/courseData'
+import { PrismaClient, Prisma } from '@prisma/client'
 
-course as Course
+const prisma = new PrismaClient()
+
+const lessonSelect = Prisma.validator<Prisma.LessonDefaultArgs>()({
+  select: {
+    title: true,
+    slug: true,
+    number: true
+  }
+})
+export type LessonOutline = Prisma.LessonGetPayload<typeof lessonSelect> & {
+  path: string
+}
+
+const chapterSelect = Prisma.validator<Prisma.ChapterDefaultArgs>()({
+  select: {
+    title: true,
+    slug: true,
+    number: true,
+    lessons: lessonSelect
+  }
+})
+
+export type ChapterOutline = Omit<
+  Prisma.ChapterGetPayload<typeof chapterSelect>,
+  'lessons'
+> & {
+  lessons: LessonOutline[]
+}
+
+const courseSelect = Prisma.validator<Prisma.CourseDefaultArgs>()({
+  select: {
+    title: true,
+    chapters: chapterSelect
+  }
+})
+export type CourseOutline = Omit<
+  Prisma.CourseGetPayload<typeof courseSelect>,
+  'chapters'
+> & {
+  chapters: ChapterOutline[]
+}
 
 // just get necessary data
-export default defineEventHandler((event): CourseMeta => {
-  const outline: OutlineChapter[] = course.chapters.reduce(
-    (prev: OutlineChapter[], next) => {
-      const lessons: OutlineLesson[] = next.lessons.map((lesson) => ({
-        title: lesson.title,
-        slug: lesson.slug,
-        number: lesson.number,
-        path: `/course/chapter/${next.slug}/lesson/${lesson.slug}`
-      }))
+export default defineEventHandler(async (): Promise<CourseOutline> => {
+  const outline = await prisma.course.findFirst(courseSelect)
 
-      const chapter: OutlineChapter = {
-        title: next.title,
-        slug: next.slug,
-        number: next.number,
-        lessons
-      }
+  if (!outline) {
+    throw createError({
+      statusCode: 404,
+      statusMessage: 'Course not f  ound'
+    })
+  }
 
-      return [...prev, chapter]
-    },
-    []
-  )
+  const chapters = outline.chapters.map((chapter) => ({
+    ...chapter,
+    lessons: chapter.lessons.map((lesson) => ({
+      ...lesson,
+      path: `/course/chapter/${chapter.slug}/lesson/${lesson.slug}`
+    }))
+  }))
 
   return {
-    title: course.title,
-    chapters: outline
+    ...outline,
+    chapters
   }
 })
