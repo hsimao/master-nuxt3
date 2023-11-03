@@ -4,7 +4,6 @@
 generator client {
   provider      = "prisma-client-js"
   binaryTargets = ["native", "darwin-arm64"]
-  output        = "../node_modules/.prisma/clinet" // 用 pnpm 才需要
 }
 
 datasource db {
