@@ -25,7 +25,9 @@
     "vue-router": "^4.2.5"
   },
   "dependencies": {
+    "@pinia/nuxt": "^0.5.1",
     "@tailwindcss/typography": "^0.5.10",
-    "@tanstack/vue-query": "^5.4.3"
+    "@tanstack/vue-query": "^5.4.3",
+    "pinia": "^2.1.7"
   }
 }

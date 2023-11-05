@@ -26,7 +26,8 @@
     <p>{{ lesson.text }}</p>
     <ClientOnly>
       <LessonCompleteButton
-        :model-value="isLessonComplete"
+        v-if="user"
+        :model-value="isCompleted"
         @update:model-value="toggleComplete"
       />
     </ClientOnly>
@@ -34,11 +35,15 @@
 </template>
 
 <script setup lang="ts">
+import { useCourseProgress } from '~/stores/useCourseProgress'
+const user = useSupabaseUser()
+
 // format lesson data
 const course = await useCourse()
 const route = useRoute()
 
 const { chapterSlug, lessonSlug } = route.params
+
 const lesson = await useLesson(chapterSlug.toString(), lessonSlug.toString())
 
 definePageMeta({
@@ -93,30 +98,14 @@ useHead({
 })
 
 // progress
-const progress = useLocalStorage<boolean[][]>('progress', [])
+const curseProgress = useCourseProgress()
+const { initialize, toggleComplete } = curseProgress
+initialize()
 
-const isLessonComplete = computed(() => {
-  if (!chapter.value || !lesson.value) return false
-
-  if (!progress.value[chapter.value.number - 1]) {
-    return false
-  }
-
-  if (!progress.value[chapter.value.number - 1][lesson.value.number - 1]) {
-    return false
-  }
-
-  return progress.value[chapter.value.number - 1][lesson.value.number - 1]
+const isCompleted = computed(() => {
+  return (
+    curseProgress.progress?.[chapterSlug as string]?.[lessonSlug as string] ||
+    false
+  )
 })
-
-const toggleComplete = () => {
-  if (!chapter.value || !lesson.value) return false
-
-  if (!progress.value[chapter.value.number - 1]) {
-    progress.value[chapter.value.number - 1] = []
-  }
-
-  progress.value[chapter.value.number - 1][lesson.value.number - 1] =
-    !isLessonComplete.value
-}
 </script>
