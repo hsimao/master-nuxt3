@@ -6,7 +6,7 @@ export const useFetchWithCache = async <T>(url: string) => {
   })
 
   if (cached.value) {
-    console.log(`Getting value from cache for ${url}]`)
+    console.log(`Getting value from cache for ${url}`)
     return cached
   }
 
