@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia'
+import type { CourseProgress } from '~/types/course'
 
 export const useCourseProgress = defineStore('courseProgress', () => {
-  type Progress = { [key: string]: { [key: string]: boolean } }
-  const progress = ref<Progress>({})
+  const progress = ref<CourseProgress>({})
 
   const initialized = ref(false)
 
@@ -10,7 +10,14 @@ export const useCourseProgress = defineStore('courseProgress', () => {
     if (initialized.value) return
     initialized.value = true
 
-    // / TODO: Fetch user progress from endpoint (lesson 6-5)
+    const { data: userProgress } = await useFetch<CourseProgress>(
+      '/api/user/progress',
+      { headers: useRequestHeaders(['cookie']) }
+    )
+
+    if (userProgress.value) {
+      progress.value = userProgress.value
+    }
   }
 
   const toggleComplete = async (chapter: string, lesson: string) => {
@@ -40,7 +47,7 @@ export const useCourseProgress = defineStore('courseProgress', () => {
     try {
       await $fetch(
         `/api/course/chapter/${chapterSlug}/lesson/${lessonSlug}/progress`,
-        { method: 'POST', body: { computed: newProgressStatus } }
+        { method: 'POST', body: { completed: newProgressStatus } }
       )
     } catch (error) {
       console.error(error)
