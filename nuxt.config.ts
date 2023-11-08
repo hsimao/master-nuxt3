@@ -14,5 +14,8 @@ export default defineNuxtConfig({
       exclude: ['']
     }
   },
-  devtools: { enabled: true }
+  devtools: { enabled: true },
+  devServer: {
+    host: '0'
+  }
 })
