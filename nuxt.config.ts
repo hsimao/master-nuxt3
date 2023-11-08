@@ -14,6 +14,11 @@ export default defineNuxtConfig({
       exclude: ['']
     }
   },
+  nitro: {
+    prerender: {
+      routes: ['/landing']
+    }
+  },
   devtools: { enabled: true },
   devServer: {
     host: '0'
