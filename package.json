@@ -21,10 +21,12 @@
     "@vueuse/nuxt": "^10.5.0",
     "nuxt": "^3.8.0",
     "sass": "^1.69.4",
+    "vite-plugin-vsharp": "^1.5.4",
     "vue": "^3.3.4",
     "vue-router": "^4.2.5"
   },
   "dependencies": {
+    "@nuxt/image": "^1.0.0",
     "@pinia/nuxt": "^0.5.1",
     "@tailwindcss/typography": "^0.5.10",
     "@tanstack/vue-query": "^5.4.3",
