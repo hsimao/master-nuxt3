@@ -95,7 +95,4 @@ definePageMeta({
 })
 
 const showPayment = ref(false)
-
-const config = useRuntimeConfig()
-console.log('config', config)
 </script>
