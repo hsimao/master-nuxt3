@@ -30,6 +30,7 @@
     "@prisma/client": "^5.5.2",
     "@tailwindcss/typography": "^0.5.10",
     "@tanstack/vue-query": "^5.4.3",
-    "pinia": "^2.1.7"
+    "pinia": "^2.1.7",
+    "stripe": "^14.4.0"
   }
 }
